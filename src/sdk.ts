@@ -28,6 +28,8 @@ export async function initSdk(): Promise<void> {
 export const environment = () => env;
 export const isAdPlaying = () => adActive;
 const live = () => sdk && env !== 'disabled';
+/** False off CrazyGames (e.g. GitHub Pages): ad buttons are hidden there instead of granting free rewards. */
+export const adsAvailable = () => !!live();
 
 export function loadingStart() { try { if (live()) sdk.game.loadingStart(); } catch { /* ignore */ } }
 export function loadingStop() { try { if (live()) sdk.game.loadingStop(); } catch { /* ignore */ } }

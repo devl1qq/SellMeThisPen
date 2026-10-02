@@ -38,3 +38,7 @@ Produces `sell-me-this-pen.zip` (contents of `dist/`, `index.html` at the zip ro
 - Midgame ad: after starting a new generation (natural break).
 - `happytime()` on inheritance.
 - Saves go through the SDK Data module on CrazyGames (syncs for logged-in players), localStorage elsewhere.
+
+## License
+
+Copyright © 2026 Ivan Kovalenko. **All rights reserved.** The source is visible for reference only — copying, modifying, redistributing or publishing the game elsewhere is not permitted without written permission. See [LICENSE](LICENSE).

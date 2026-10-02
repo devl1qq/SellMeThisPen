@@ -2,6 +2,8 @@
   "name": "sell-me-this-pen",
   "private": true,
   "version": "0.1.0",
+  "license": "UNLICENSED",
+  "author": "Ivan Kovalenko",
   "type": "module",
   "scripts": {
     "dev": "vite",

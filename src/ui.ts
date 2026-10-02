@@ -155,6 +155,8 @@ function applyStatic() {
   $('btn-ad').textContent = `📺 ${t('adTurbo')}`;
   $('btn-turbo').title = t('turboHint');
   $('jail-btn').textContent = t('audit.bail');
+  $('btn-ad').classList.toggle('hidden', !sdk.adsAvailable());
+  $('jail-btn').classList.toggle('hidden', !sdk.adsAvailable());
   tabSig = '';
   sceneSig = '';
 }
@@ -228,8 +230,8 @@ async function onClick(e: MouseEvent) {
 function onAudit(info: { fine: number; jailDays: number }) {
   let body = t('audit.body', { fine: usd(info.fine) });
   const buttons: ModalBtn[] = [{ label: t('ok') }];
-  if (info.jailDays) {
-    body += t('audit.jail', { years: Math.round(info.jailDays / 365) });
+  if (info.jailDays) body += t('audit.jail', { years: Math.round(info.jailDays / 365) });
+  if (info.jailDays && sdk.adsAvailable()) {
     buttons.unshift({
       label: t('audit.bail'), cls: 'ad', run: async () => {
         if (await sdk.rewardedAd()) { s.jail = 0; toast(t('toast.free'), 'good'); } else toast(t('toast.adFail'), 'bad');
@@ -269,10 +271,10 @@ function showInherit(dead: boolean) {
   const body = dead
     ? t('death.body', { age: age(s.days), earned: usd(s.lifeEarned), pts })
     : t('will.body', { pts });
-  const buttons: ModalBtn[] = [
-    { label: t('death.ad'), cls: 'ad', run: async () => { const ok = await sdk.rewardedAd(); if (!ok) toast(t('toast.adFail'), 'bad'); await finish(ok ? 1.5 : 1); } },
-    { label: t('death.next'), cls: 'gold', run: () => finish(1) },
-  ];
+  const buttons: ModalBtn[] = [{ label: t('death.next'), cls: 'gold', run: () => finish(1) }];
+  if (sdk.adsAvailable()) {
+    buttons.unshift({ label: t('death.ad'), cls: 'ad', run: async () => { const ok = await sdk.rewardedAd(); if (!ok) toast(t('toast.adFail'), 'bad'); await finish(ok ? 1.5 : 1); } });
+  }
   if (!dead) buttons.unshift({ label: t('cancel') });
   modal(dead ? `🕊️ ${t('death.title')}` : `📜 ${t('will.title')}`, body, buttons);
 }
