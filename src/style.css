@@ -57,7 +57,8 @@ b { font-weight: 650; }
   background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 8px;
   padding: 7px 12px; font: inherit; font-weight: 600; cursor: pointer; transition: transform .06s, background .15s, opacity .15s;
 }
-.btn:hover:not(:disabled) { background: #283041; }
+@media (hover: hover) { .btn:hover:not(:disabled) { background: #283041; } .row:hover { border-color: #3a4458; } }
+button, .row, .tabbtn { touch-action: manipulation; }
 .btn:active:not(:disabled) { transform: scale(.97); }
 .btn:disabled { opacity: .42; cursor: default; }
 .btn.icon { width: 38px; padding: 7px 0; }
@@ -72,7 +73,7 @@ b { font-weight: 650; }
 .btns { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
 
 /* ---------- layout ---------- */
-main { flex: 1; display: grid; grid-template-columns: minmax(300px, 380px) 1fr; min-height: 0; }
+main { flex: 1; display: grid; grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); min-height: 0; }
 .side { padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; border-right: 1px solid var(--line); }
 .content { display: flex; flex-direction: column; min-height: 0; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 12px; }
@@ -116,7 +117,6 @@ main { flex: 1; display: grid; grid-template-columns: minmax(300px, 380px) 1fr; 
 .row > span { position: relative; z-index: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .row .fill { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--job); opacity: .55; transition: width .12s linear; }
 .row.sk .fill { background: var(--skill); }
-.row:hover { border-color: #3a4458; }
 .row.sel { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold) inset; }
 .row .nm { font-weight: 650; }
 .row .eff { font-size: 12px; }
@@ -213,23 +213,70 @@ main { flex: 1; display: grid; grid-template-columns: minmax(300px, 380px) 1fr; 
 @keyframes pop { from { transform: scale(.92); opacity: 0; } }
 @keyframes slide { from { transform: translateX(30px); opacity: 0; } }
 
-/* ---------- mobile ---------- */
-@media (max-width: 860px) {
-  html, body { overflow: auto; }
-  #app { height: auto; min-height: 100%; }
-  main { grid-template-columns: 1fr; }
-  .side { border-right: 0; overflow: visible; padding-bottom: 0; }
+/* ---------- phones (portrait) & narrow tablets ---------- */
+@media (max-width: 860px) and (min-height: 501px), (max-width: 600px) {
+  #app { height: 100vh; height: 100dvh; }
+
+  /* header: 4 stat chips in one row, controls below */
+  .top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; padding: calc(6px + env(safe-area-inset-top)) 10px 6px; }
+  .brand { display: none; }
+  .stats { display: grid; grid-template-columns: 1.2fr 1fr .85fr .85fr; gap: 5px; }
+  .chip, .chip.wide { min-width: 0; padding: 4px 7px; }
+  .chip .lbl { font-size: 9px; letter-spacing: .3px; }
+  .chip .lbl, .chip b, .chip small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chip b { font-size: 13px; }
+  .chip small { font-size: 10px; }
+  .ctrl .btn { padding: 8px 6px; font-size: 13px; }
+  .ctrl .btn.turbo, .ctrl .btn.ad { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* one scrolling column: scene + status, then the active tab */
+  main { display: block; position: relative; overflow-y: auto; overscroll-behavior: contain; padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+  .side { border-right: 0; overflow: visible; padding: 8px 10px 0; gap: 8px; }
+  .scene { aspect-ratio: 21 / 10; }
+  .current { padding: 10px; gap: 8px; }
+  .mini { font-size: 11.5px; }
   .journal { display: none; }
-  .content { min-height: 70vh; }
-  .tab { overflow: visible; }
-  .tabs { position: sticky; top: 0; background: var(--bg); z-index: 5; }
+  .content { display: block; }
+  .tab { overflow: visible; padding: 10px; }
+
+  /* app-style bottom tab bar */
+  .tabs {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; gap: 0; overflow: hidden;
+    background: var(--panel); border-top: 1px solid var(--line); border-bottom: 0;
+    padding: 4px 4px calc(4px + env(safe-area-inset-bottom));
+  }
+  .tabbtn { flex: 1 1 0; min-width: 0; flex-direction: column; gap: 2px; padding: 6px 0 5px; border-radius: 8px; font-size: 9.5px; }
+  .tabbtn span { font-size: 19px; line-height: 1; }
+  .tabbtn em { display: block; max-width: 100%; padding: 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tabbtn.on { box-shadow: none; background: var(--panel2); color: var(--gold); }
+
+  /* tables & grids */
+  .grid6 { grid-template-columns: minmax(0, 1fr) 36px minmax(64px, auto); gap: 6px; }
+  .opt { display: none; }
+  .row { padding: 12px 10px; }
+  .items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stocks, .schemes, .perks, .achs { grid-template-columns: minmax(0, 1fr); }
+  .btn { padding: 9px 12px; }
+  .btn.sm { padding: 9px 10px; }
+
+  /* toasts above the tab bar, modals as bottom sheets */
+  .toasts { left: 10px; right: 10px; bottom: calc(72px + env(safe-area-inset-bottom)); max-width: none; }
+  .modal { place-items: end center; padding: 10px 10px calc(10px + env(safe-area-inset-bottom)); }
+  .mbox { max-height: 85vh; max-height: 85dvh; overflow-y: auto; padding: 18px; }
+  .mbtns { flex-direction: column-reverse; }
+  .mbtns .btn { width: 100%; padding: 13px; }
+}
+
+/* ---------- phones (landscape): keep two columns, just tighter ---------- */
+@media (max-height: 500px) and (min-width: 601px) {
+  .top { padding: 4px 10px; gap: 8px; }
+  .brand span { display: none; }
+  .chip { padding: 2px 8px; min-width: 0; }
+  .chip.wide { min-width: 140px; }
+  main { grid-template-columns: minmax(230px, 290px) minmax(0, 1fr); }
+  .side { padding: 8px; gap: 8px; }
+  .journal { display: none; }
+  .tab { padding: 10px; }
   .tabbtn em { display: none; }
   .tabbtn.on em { display: inline; }
-  .grid6 { grid-template-columns: minmax(120px, 2fr) 40px minmax(80px, 1.2fr); }
-  .opt { display: none; }
-  .top { gap: 8px; padding: 6px 10px; }
-  .brand span { display: none; }
-  .chip { min-width: 0; flex: 1; padding: 3px 8px; }
-  .chip.wide { min-width: 0; }
-  .chip b { font-size: 13px; }
 }

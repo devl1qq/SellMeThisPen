@@ -169,7 +169,7 @@ async function onClick(e: MouseEvent) {
   const id = el.dataset.id ?? '';
   const f = Number(el.dataset.f ?? 1);
   switch (el.dataset.act) {
-    case 'tab': tab = id as Tab; tabSig = ''; break;
+    case 'tab': tab = id as Tab; tabSig = ''; revealTab(); break;
     case 'job': chooseJob(s, id); break;
     case 'skill': chooseSkill(s, id); break;
     case 'buy': buyItem(s, id); break;
@@ -223,6 +223,15 @@ async function onClick(e: MouseEvent) {
       break;
   }
   frame(true);
+}
+
+/** On phones the whole page scrolls; after switching tabs, bring the tab's top into view if we're past it. */
+function revealTab() {
+  const main = document.querySelector('main') as HTMLElement;
+  const content = document.querySelector('.content') as HTMLElement;
+  if (main.scrollHeight <= main.clientHeight) return;
+  const top = content.offsetTop - 4;
+  if (main.scrollTop > top) main.scrollTop = top;
 }
 
 // ---------- Game hooks ----------
@@ -627,7 +636,7 @@ function updateTop() {
   setText(vn, `${net >= 0 ? '+' : ''}${usd(net)}${t('perDay')}`);
   vn.className = net >= 0 ? 'pos' : 'neg';
   const life = lifespanDays(m);
-  setText($('v-age'), `${age(s.days)} / ${Math.floor(life / 365)}`);
+  setText($('v-age'), window.innerWidth <= 600 ? `${Math.floor(s.days / 365)} / ${Math.floor(life / 365)}` : `${age(s.days)} / ${Math.floor(life / 365)}`);
   setW($('b-age'), (s.days - START_AGE * 365) / (life - START_AGE * 365));
   setText($('v-happy'), mult(happiness(m)));
   setText($('v-heat'), String(Math.round(s.heat)));
